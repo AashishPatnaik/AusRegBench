@@ -34,3 +34,4 @@ if __name__ == "__main__":
 
     print(f"Postgres: {pg_version}")
     print(f"pgvector enabled: {pgvector_row is not None}")
+    
