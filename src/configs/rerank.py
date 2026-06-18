@@ -1,5 +1,5 @@
 """
-Config 1: naive RAG. Embed query -> dense search top-5 -> generate with citations.
+Config 3: rerank RAG. RRF retrieve 20 -> cross-encoder rerank -> top 5 -> generate.
 """
 
 import os
@@ -8,19 +8,22 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from sentence_transformers import CrossEncoder
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from retrieval import dense_search, embed_query
+from retrieval import embed_query, rrf_search
 
 load_dotenv()
 
 GENERATION_MODEL = "gpt-4o"
-CONFIG_NAME = "naive"
+CONFIG_NAME = "rerank"
+CROSS_ENCODER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 
 client = OpenAI(api_key=OPENAI_API_KEY)
+cross_encoder = CrossEncoder(CROSS_ENCODER_MODEL)
 
 SYSTEM_PROMPT = (
     "You are a precise legal research assistant for Australian financial regulation. "
@@ -35,7 +38,13 @@ SYSTEM_PROMPT = (
 
 def run(query: str, source_filter: list[str] | None = None) -> dict:
     query_embedding = embed_query(query)
-    retrieved_chunks = dense_search(query_embedding, source_filter=source_filter, top_k=5)
+    candidates = rrf_search(query, query_embedding, source_filter=source_filter, top_k=20)
+
+    rerank_scores = cross_encoder.predict([(query, chunk["text"]) for chunk in candidates])
+    for chunk, rerank_score in zip(candidates, rerank_scores):
+        chunk["rerank_score"] = float(rerank_score)
+
+    retrieved_chunks = sorted(candidates, key=lambda chunk: chunk["rerank_score"], reverse=True)[:5]
 
     context = "\n".join(
         f"[{chunk['source']} | {chunk['paragraph_id']}]\n{chunk['text']}\n"
@@ -61,6 +70,10 @@ def run(query: str, source_filter: list[str] | None = None) -> dict:
                 "source": chunk["source"],
                 "paragraph_id": chunk["paragraph_id"],
                 "text": chunk["text"][:200],
+                "rrf_score": chunk["rrf_score"],
+                "dense_rank": chunk["dense_rank"],
+                "bm25_rank": chunk["bm25_rank"],
+                "rerank_score": chunk["rerank_score"],
             }
             for chunk in retrieved_chunks
         ],
@@ -77,4 +90,7 @@ if __name__ == "__main__":
     print(result["answer"])
     print("\nRetrieved paragraph IDs:")
     for chunk in result["retrieved_chunks"]:
-        print(f"- [{chunk['source']}] {chunk['paragraph_id']}")
+        print(
+            f"- [{chunk['source']}] {chunk['paragraph_id']} "
+            f"(rerank_score={chunk['rerank_score']:.5f})"
+        )
