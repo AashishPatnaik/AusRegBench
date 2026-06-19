@@ -6,6 +6,8 @@ results for comparison. No scoring/taxonomy logic here yet.
 import sys
 from pathlib import Path
 
+from langsmith import traceable
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from configs.grounded import run as run_grounded
@@ -23,6 +25,7 @@ CONFIG_RUNNERS = {
 }
 
 
+@traceable(name="evaluate_query")
 def evaluate_query(query: str, source_filter: list[str] | None = None) -> dict:
     results = {}
 

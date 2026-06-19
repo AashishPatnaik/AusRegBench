@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+from langsmith import traceable
 from openai import OpenAI
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -181,6 +182,7 @@ def _format_chunk(chunk: dict) -> str:
     return f"[{chunk['source']} | {chunk['paragraph_id']}]\n{chunk['text']}\n"
 
 
+@traceable(name="kg_augmented")
 def run(query: str, source_filter: list[str] | None = None) -> dict:
     query_embedding = embed_query(query)
     retrieved_chunks = rrf_search(query, query_embedding, source_filter=source_filter, top_k=5)

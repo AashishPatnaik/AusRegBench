@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+from langsmith import traceable
 from openai import OpenAI
 from sentence_transformers import CrossEncoder
 
@@ -36,6 +37,7 @@ SYSTEM_PROMPT = (
 )
 
 
+@traceable(name="rerank")
 def run(query: str, source_filter: list[str] | None = None) -> dict:
     query_embedding = embed_query(query)
     candidates = rrf_search(query, query_embedding, source_filter=source_filter, top_k=20)

@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+from langsmith import traceable
 from openai import OpenAI
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -33,6 +34,7 @@ SYSTEM_PROMPT = (
 )
 
 
+@traceable(name="naive")
 def run(query: str, source_filter: list[str] | None = None) -> dict:
     query_embedding = embed_query(query)
     retrieved_chunks = dense_search(query_embedding, source_filter=source_filter, top_k=5)
