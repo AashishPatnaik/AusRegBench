@@ -5,3 +5,5 @@ data/*.json
 data/*.pdf*.code-workspace
 __pycache__/
 *.pyc
+results/*.jsonl
+results/*.json
