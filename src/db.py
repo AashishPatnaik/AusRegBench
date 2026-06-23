@@ -1,4 +1,5 @@
 import os
+import time
 import psycopg2
 from dotenv import load_dotenv
 
@@ -8,7 +9,16 @@ _DATABASE_URL = os.environ["DATABASE_URL"]
 
 
 def get_connection() -> psycopg2.extensions.connection:
-    return psycopg2.connect(_DATABASE_URL)
+    last_error = None
+    for attempt in range(3):
+        try:
+            return psycopg2.connect(_DATABASE_URL)
+        except psycopg2.OperationalError as e:
+            last_error = e
+            if attempt < 2:
+                print(f"  DB connection attempt {attempt+1} failed, retrying in 5s...")
+                time.sleep(5)
+    raise last_error
 
 
 def _enable_pgvector(conn: psycopg2.extensions.connection) -> None:
