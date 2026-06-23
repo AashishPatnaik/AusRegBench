@@ -1,0 +1,42 @@
+{
+  "naive": {
+    "total": 119,
+    "correct_and_faithful": 91,
+    "fabricated_citation": 0,
+    "misstated_obligation": 16,
+    "missing_citation": 8,
+    "real_but_irrelevant": 4
+  },
+  "hybrid": {
+    "total": 119,
+    "correct_and_faithful": 96,
+    "fabricated_citation": 0,
+    "misstated_obligation": 13,
+    "missing_citation": 5,
+    "real_but_irrelevant": 5
+  },
+  "rerank": {
+    "total": 119,
+    "correct_and_faithful": 95,
+    "fabricated_citation": 1,
+    "misstated_obligation": 14,
+    "missing_citation": 5,
+    "real_but_irrelevant": 4
+  },
+  "kg_augmented": {
+    "total": 119,
+    "correct_and_faithful": 91,
+    "fabricated_citation": 0,
+    "misstated_obligation": 14,
+    "missing_citation": 8,
+    "real_but_irrelevant": 6
+  },
+  "grounded": {
+    "total": 119,
+    "correct_and_faithful": 105,
+    "fabricated_citation": 0,
+    "misstated_obligation": 7,
+    "missing_citation": 5,
+    "real_but_irrelevant": 2
+  }
+}
