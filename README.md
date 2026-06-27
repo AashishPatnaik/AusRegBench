@@ -27,7 +27,7 @@ retrieval.
 
 ## Live Dashboard
 
-[https://ausregbench-sat4lz4vjbqekjya9dy6t7.streamlit.app](https://ausregbench-sat4lz4vjbqekjya9dy6t7.streamlit.app)
+[https://huggingface.co/spaces/AashishPatnaik/AusRegBench](https://huggingface.co/spaces/AashishPatnaik/AusRegBench)
 
 ## What This Measures
 
