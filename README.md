@@ -1,3 +1,14 @@
+---
+title: AusRegBench
+emoji: ⚖️
+colorFrom: blue
+colorTo: green
+sdk: streamlit
+sdk_version: "1.45.0"
+app_file: dashboard/app.py
+pinned: false
+---
+
 # AusRegBench
 
 **An open, reproducible benchmark measuring where RAG systems fail on Australian
